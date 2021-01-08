@@ -157,12 +157,12 @@
         "Это старая стиральная машинка. Внутри барабана скомканы грязные штаны, все в крови.",
         {
             "text": "У дверцы сломан замок, она свободно болтается.",
-            "condition": ["keys", true]
+            "condition": ["washer_broken", true]
         },
         {
             "text": "Можно попробовать открыть дверцу машинки.",
             "highlight": "открыть",
-            "condition": ["keys", false],
+            "condition": ["washer_broken", false],
             "move": "closed"
         },
         {
@@ -174,13 +174,14 @@
     "closed": [
         {
             "text": "Заклинило. Руками не открыть.",
-            "condition": ["keys", false]
+            "condition": ["washer_broken", false]
         },
         {
             "text": "Может, сломать замок ножкой от стула?",
             "highlight": "ножкой от стула",
             "name": "leg",
-            "condition": [["leg", true], ["keys", false]],
+            "change": ["washer_broken", true],
+            "condition": [["leg", true], ["washer_broken", false]],
             "move": "opened"
         },
         {
