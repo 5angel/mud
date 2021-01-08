@@ -65,6 +65,7 @@
         },
         {
             "text": "Можно открыть ключами.",
+            "condition": ["keys", true],
             "highlight": "открыть ключами",
             "move": "end"
         },
