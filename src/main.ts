@@ -6,7 +6,7 @@ function main() {
   const scene = Scene.getInstance();
 
   scene.init();
-  scene.render();
+  scene.render("intro");
 }
 
 main();

@@ -1,10 +1,18 @@
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: "Tahoma";
+  background-color: black;
+  color: #ccccb3;
+  font-family: "Verdana";
   font-size: 24px;
+}
+
+p {
+  margin-bottom: 20px;
 }
 
 img {
@@ -23,29 +31,42 @@ img {
 }
 
 #container {
+  position: relative;
   width: 800px;
+  height: 100vh;
   margin: 0 auto;
+  padding: 40px;
+  background-color: #333;
 }
 
 #container.alert {
-  background-color: greenyellow;
   cursor: pointer;
+  text-align: center;
 }
 
-#container.alert:hover,
-#container.alert:active {
-  background-color: black;
+#container.alert span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 8px;
   color: greenyellow;
+}
+
+#container.alert:hover span,
+#container.alert:active span {
+  background-color: black;
+  color: white;
 }
 
 span {
   white-space: nowrap;
-  background-color: yellow;
+  color: yellow;
   cursor: pointer;
 }
 
 span:hover,
 span:active {
   background-color: black;
-  color: yellow;
+  color: white;
 }

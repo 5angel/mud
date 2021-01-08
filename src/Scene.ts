@@ -8,11 +8,10 @@ export type Condition = [string, boolean];
 
 export type ActionConfig = {
   text?: string;
-  name?: string;
   condition?: Condition | Condition[];
   highlight?: string;
-  item?: boolean;
-  change?: boolean;
+  item?: string;
+  change?: Condition;
   move?: string;
 };
 
@@ -25,7 +24,7 @@ export default class Scene {
   private static instance = new Scene();
 
   private container: HTMLElement = createElement("container");
-  private config: SceneConfig = null;
+  private target: string = null;
   private inventory: Item[] = [];
   private condition: {
     [name: string]: boolean;
@@ -47,8 +46,9 @@ export default class Scene {
 
   handleClick = ({ target }: MouseEvent) => {
     if (target instanceof HTMLElement && target.tagName === "SPAN") {
+      const config = source[this.target];
       const text = target.innerText;
-      const action: ActionConfig = this.config.find((item) =>
+      const action: ActionConfig = config.find((item) =>
         typeof item === "string" ? false : item.highlight === text
       ) as ActionConfig;
 
@@ -58,42 +58,39 @@ export default class Scene {
     }
   };
 
-  handleAction({ change, item, name, highlight: title, move }: ActionConfig) {
+  setCondition([name, value]: Condition) {
+    this.condition[name] = value;
+  }
+
+  addItemToInventory(name: string, title: string) {
+    this.inventory.push({
+      name,
+      title,
+    });
+  }
+
+  handleAction({ change, item, highlight, move }: ActionConfig) {
     if (change != null) {
-      this.condition[name] = change;
+      this.setCondition(change);
     }
 
-    if (item) {
-      this.inventory.push({
-        name,
-        title,
-      });
-      this.showInventoryAlert(title, move);
+    if (item != null) {
+      this.addItemToInventory(item, highlight);
+      this.showInventoryAlert(highlight, move);
       return;
     }
 
-    if (move != null) {
-      this.render(source[move]);
-      return;
-    }
-
-    this.render();
+    this.render(move != null ? move : this.target);
   }
 
   showInventoryAlert(title: string, target?: string) {
     const handleClick = () => {
       this.container.removeEventListener("click", handleClick);
       this.container.classList.remove("alert");
-
-      if (target != null) {
-        this.render(source[target]);
-        return;
-      }
-
-      this.render();
+      this.render(target != null ? target : this.target);
     };
 
-    this.container.innerHTML = `Теперь у тебя есть «${title}»`;
+    this.container.innerHTML = `<span>Теперь у тебя есть «${title}»</span>`;
     this.container.classList.add("alert");
     this.container.addEventListener("click", handleClick);
   }
@@ -117,21 +114,17 @@ export default class Scene {
     throw new TypeError("invalid condition");
   }
 
-  render(config?: SceneConfig) {
-    if (config != null) {
-      this.config = config;
-    }
+  render(target: string) {
+    this.target = target;
 
-    if (this.config == null) {
-      this.config = source["room"];
-    }
+    const config = source[target];
 
-    const html = this.config.reduce<string>((result, value) => {
+    const html = config.reduce<string>((result, value) => {
       if (typeof value === "string") {
         return `${result}<p>${value}</p>`;
       }
 
-      const { condition, name, text, highlight } = value;
+      const { condition, text, highlight } = value;
 
       // Условие не выполнено
       if (condition != null && !this.checkCondition(condition)) {
