@@ -1,0 +1,51 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Tahoma";
+  font-size: 24px;
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+#container {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+#container {
+  width: 800px;
+  margin: 0 auto;
+}
+
+#container.alert {
+  background-color: greenyellow;
+  cursor: pointer;
+}
+
+#container.alert:hover,
+#container.alert:active {
+  background-color: black;
+  color: greenyellow;
+}
+
+span {
+  white-space: nowrap;
+  background-color: yellow;
+  cursor: pointer;
+}
+
+span:hover,
+span:active {
+  background-color: black;
+  color: yellow;
+}
