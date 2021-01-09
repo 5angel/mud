@@ -31,6 +31,10 @@ p {
   margin-bottom: 20px;
 }
 
+p:last-child {
+  margin-bottom: 0;
+}
+
 p.sticker {
   position: relative;
   z-index: 0;
@@ -95,7 +99,6 @@ img {
 }
 
 #scene {
-  height: 100%;
   padding: 80px 40px;
   text-shadow: 0 0 2px black;
 }
