@@ -161,3 +161,9 @@ span:hover:after {
   background-color: black;
   animation: Shake 200ms steps(4) infinite;
 }
+
+@media screen and (max-width: 800px) {
+  #container {
+    width: 100%;
+  }
+}
