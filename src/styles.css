@@ -163,6 +163,7 @@ span:hover:after {
 
 @media screen and (max-width: 800px) {
   #container {
+    overflow: visible;
     width: 100%;
   }
 }
