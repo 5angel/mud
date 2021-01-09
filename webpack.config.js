@@ -20,8 +20,28 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif)$/i,
-        use: ["url-loader"],
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'assets/'
+            }
+          }
+        ]
       },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
+            }
+          }
+        ]
+      }
     ],
   },
 
@@ -30,6 +50,7 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
     alias: {
+      fonts: path.resolve(__dirname, "./fonts"),
       assets: path.resolve(__dirname, "./assets")
     },
   },

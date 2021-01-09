@@ -8,11 +8,12 @@ export type Condition = [string, boolean];
 
 export type ActionConfig = {
   text?: string;
+  move?: string;
+  item?: string;
+  image?: string;
+  change?: Condition;
   condition?: Condition | Condition[];
   highlight?: string;
-  item?: string;
-  change?: Condition;
-  move?: string;
 };
 
 type Item = {
@@ -24,6 +25,8 @@ export default class Scene {
   private static instance = new Scene();
 
   private container: HTMLElement = createElement("container");
+  private scene: HTMLElement = createElement("scene");
+
   private target: string = null;
   private inventory: Item[] = [];
   private condition: {
@@ -41,7 +44,8 @@ export default class Scene {
   }
 
   init() {
-    document.body.append(this.container);
+    document.body.appendChild(this.container);
+    this.container.appendChild(this.scene);
   }
 
   handleClick = ({ target }: MouseEvent) => {
@@ -84,24 +88,30 @@ export default class Scene {
   }
 
   showInventoryAlert(title: string, target?: string) {
+    const alert = createElement("alert");
+    alert.innerHTML = `Теперь у тебя есть ${title}`;
+
     const handleClick = () => {
       this.container.removeEventListener("click", handleClick);
       this.container.classList.remove("alert");
+      alert.parentNode.removeChild(alert);
       this.render(target != null ? target : this.target);
+      this.container.appendChild(this.scene);
     };
 
-    this.container.innerHTML = `<span>Теперь у тебя есть «${title}»</span>`;
     this.container.classList.add("alert");
+    this.scene.parentNode.removeChild(this.scene);
     this.container.addEventListener("click", handleClick);
+    this.container.appendChild(alert);
   }
 
   checkCondition(condition: Condition | Condition[]) {
-    if (Array.isArray(condition[0])) {
-      const array = condition as Array<Condition>;
-      return array.every((value) => this.checkCondition(value));
-    }
+    if (condition != null) {
+      if (Array.isArray(condition[0])) {
+        const array = condition as Array<Condition>;
+        return array.every((value) => this.checkCondition(value));
+      }
 
-    if (typeof condition[0] === "string") {
       const [name, value] = condition;
       const target = this.condition[name];
       if (target != null) {
@@ -111,38 +121,39 @@ export default class Scene {
       return !value;
     }
 
-    throw new TypeError("invalid condition");
+    return true;
   }
+
+  renderLine = (previous: string, config: string | ActionConfig) => {
+    if (typeof config === "string") {
+      return `${previous}<p>${config}</p>`;
+    }
+
+    const { text, image, condition, highlight } = config;
+
+    if (!this.checkCondition(condition)) {
+      return previous;
+    }
+
+    if (image != null) {
+      return `${previous}<p class="image_${image} sticker "></p>`;
+    }
+
+    if (highlight != null) {
+      return `${previous}<p>${text.replace(
+        highlight,
+        `<span>${highlight}</span>`
+      )}</p>`;
+    }
+
+    return `${previous}<p>${text}</p>`;
+  };
 
   render(target: string) {
     this.target = target;
-
     const config = source[target];
-
-    const html = config.reduce<string>((result, value) => {
-      if (typeof value === "string") {
-        return `${result}<p>${value}</p>`;
-      }
-
-      const { condition, text, highlight } = value;
-
-      // Условие не выполнено
-      if (condition != null && !this.checkCondition(condition)) {
-        return result;
-      }
-
-      if (highlight != null) {
-        return `${result}<p>${text.replace(
-          highlight,
-          `<span>${highlight}</span>`
-        )}</p>`;
-      }
-
-      return `${result}<p>${text}</p>`;
-    }, "");
-
-    this.container.innerHTML = html;
-
+    const html = config.reduce<string>(this.renderLine, "");
+    this.scene.innerHTML = html;
     this.container.addEventListener("click", this.handleClick);
   }
 }
