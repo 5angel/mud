@@ -97,7 +97,7 @@ img {
 #scene {
   height: 100%;
   padding: 40px;
-  padding-top: 80px;
+  padding: 80px 0;
   text-shadow: 0 0 2px black;
 }
 
